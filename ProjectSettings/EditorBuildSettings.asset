@@ -9,10 +9,7 @@ EditorBuildSettings:
     path: Assets/Scenes/MenuScene.unity
     guid: 99c9720ab356a0642a771bea13969a05
   - enabled: 1
-    path: Assets/Scenes/HubScene.unity
-    guid: 0f7585209eefc8947b684edb9bc9f2c2
-  - enabled: 1
-    path: Assets/Scenes/OptionsScene.unity
-    guid: aebef23f8eb06394da19081fee93eaef
+    path: Assets/Scenes/MainScene.unity
+    guid: 3be33f440a4c76c47b4f88d1d65fd7ac
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 2b7cbd7c0bd86a2458db80244160822a, type: 3}

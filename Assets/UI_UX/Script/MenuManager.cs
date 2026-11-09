@@ -41,8 +41,9 @@ public class MainMenuManager : MonoBehaviour
 
     public void PlayGame()
     {
-        if (mainMenuPanel != null) mainMenuPanel.SetActive(false);
-        if (hubPanel != null) hubPanel.SetActive(true);
+        UnityEngine.SceneManagement.SceneManager.LoadScene("MainScene");
+        //if (mainMenuPanel != null) mainMenuPanel.SetActive(false);
+        //if (hubPanel != null) hubPanel.SetActive(true);
     }
 
     public void QuitGame()

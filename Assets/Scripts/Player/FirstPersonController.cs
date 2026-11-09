@@ -1,38 +1,36 @@
 using System.Collections;
-using UnityEditor.Animations;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-public class PlayerController : MonoBehaviour
+public class FirstPersonController : MonoBehaviour
 {
     [Header("General")]
     [SerializeField] private InputActionAsset inputActions;
     [SerializeField] private Transform seedPrefab;
 
     [Header("Move parameters")]
-    [SerializeField] private float moveSpeed = 10;
-    [SerializeField] private float airMoveSpeed = 5;
-    [SerializeField, Tooltip("Additional speed, total run speed is moveSpeed + runSpeed.")]
-    private float runSpeed = 2;
+    [SerializeField] private float moveSpeed = 6f;
+    [SerializeField] private float airMoveSpeed = 4f;
+    [SerializeField] private float runSpeed = 3f;
     [SerializeField] private AnimationCurve runCurve;
     [SerializeField] private AnimationCurve jumpCurve;
-    [SerializeField] private float additionalGravity = 10;
-    [SerializeField] private float maxJumpForce = 10;
-    [SerializeField] private float maxJumpTime = 1;
-    [SerializeField] private float jumpDuration = 1.5f;
+    [SerializeField] private float additionalGravity = 10f;
+    [SerializeField] private float maxJumpForce = 8f;
+    [SerializeField] private float maxJumpTime = 1f;
+    [SerializeField] private float jumpDuration = 1.2f;
 
     [Header("Mouse look parameters")]
-    [SerializeField] private float rotationSpeed = 10;
-    [SerializeField] private float sensitivity = 100;
+    [SerializeField] private float sensitivity = 1.5f; // Sensibilité directe et nette
     [SerializeField] private Transform originTsfm;
     
     [Header("Headbob parameters")]
     [SerializeField] private AnimationCurve headbobCurve;
     [SerializeField] private Transform camHolder;
     [SerializeField] private float headbobAmp = 0.05f;
-   //[SerializeField] private float headbobFreq = 3f;
     [SerializeField] private float headbobTime = 0.5f;
-    [SerializeField] private bool eyeStabilization = true;
+
+    [Header("UI / Options Integration")]
+    [SerializeField] private GameObject optionPanel;
 
     [Header("Others")]
     [SerializeField] private float maxSeedSize = 10;
@@ -42,7 +40,6 @@ public class PlayerController : MonoBehaviour
     private Transform mainCam;
     private Rigidbody rb;
     private CapsuleCollider coll;
-    //private Animator animController;
 
     private float curSpeed;
     private bool jump;
@@ -50,7 +47,6 @@ public class PlayerController : MonoBehaviour
     private Vector3 moveVector;
     private float curJumpForce;
     private float curPitch;
-    private Quaternion yRotation;
     private bool grounded;
     private float runTimer;
     private float jumpTimer;
@@ -62,150 +58,148 @@ public class PlayerController : MonoBehaviour
     private InputAction runAction;
     private InputAction jumpAction;
 
+    private bool isPaused = false;
 
     void Awake()
     {
+        if (inputActions != null)
+        {
+            actionMap = inputActions.FindActionMap("FirstPerson");
+            if (actionMap == null && inputActions.actionMaps.Count > 0)
+            {
+                actionMap = inputActions.actionMaps[0];
+            }
 
-        actionMap = inputActions.FindActionMap("FirstPerson");
-        
+            if (actionMap != null)
+            {
+                moveAction = actionMap.FindAction("Move");
+                lookAction = actionMap.FindAction("Look");
+                runAction = actionMap.FindAction("Run");
+                jumpAction = actionMap.FindAction("Jump");
 
-        moveAction = actionMap.FindAction("Move");
-        lookAction = actionMap.FindAction("Look");
-        runAction = actionMap.FindAction("Run");
-        jumpAction = actionMap.FindAction("Jump");
-        actionMap.Enable();
+                actionMap.Enable();
 
-        jumpAction.performed += OnJump;
+                if (jumpAction != null)
+                    jumpAction.performed += OnJump;
+            }
+        }
 
         rb = GetComponent<Rigidbody>();
         coll = GetComponent<CapsuleCollider>();
         mainCam = GetComponentInChildren<Camera>().transform;
-        //animController = GetComponent<Animator>();
+
+        if (rb != null)
+        {
+            rb.freezeRotation = true;
+        }
 
         curSpeed = moveSpeed;
         moveVector = Vector3.zero;
-        yRotation = Quaternion.identity;
         jump = false;
         jumping = false;
         runTimer = 0;
         jumpTimer = 0;
-        curPitch = 0;
+        curPitch = camHolder ? camHolder.localEulerAngles.x : 0f;
         headbobTimer = 0;
         curJumpForce = 0;
     }
 
-    // Update is called once per frame
+    void OnEnable()
+    {
+        if (actionMap != null) { try { actionMap.Enable(); } catch {} }
+    }
+
+    void OnDisable()
+    {
+        if (actionMap != null) { try { actionMap.Disable(); } catch {} }
+    }
+
+    void Start()
+    {
+        ResumeGame();
+    }
+
     void Update()
     {
-        // Hide & lock mouse cursor inside the screen
-        Cursor.lockState = CursorLockMode.Locked;
-        Cursor.visible = true;
-
-        // Set grounded or not state
-        grounded = false;
-        if (Physics.SphereCast(originTsfm.position, coll.radius, -transform.up, out RaycastHit hit, (coll.height * 0.5f) - coll.radius + 0.1f, LayerMask.GetMask("Ground")))
+        if (Keyboard.current != null && Keyboard.current.escapeKey.wasPressedThisFrame)
         {
-            grounded = true;
+            if (isPaused) ResumeGame();
+            else PauseGame();
         }
 
-        if (Input.GetKeyDown(KeyCode.E))
+        if (isPaused) return;
+
+        grounded = false;
+        if (originTsfm != null && coll != null)
+        {
+            if (Physics.SphereCast(originTsfm.position, coll.radius, -transform.up, out RaycastHit hit, (coll.height * 0.5f) - coll.radius + 0.2f, ~LayerMask.GetMask("Player")))
+            {
+                grounded = true;
+            }
+        }
+
+        if (Keyboard.current != null && Keyboard.current.eKey.wasPressedThisFrame)
         {
             Ray ray = new Ray(mainCam.position, mainCam.forward);
             if (Physics.Raycast(ray, out RaycastHit hitInfo, 10f))
             {
-                /*IVehicle vehicle = hitInfo.collider.GetComponent<IVehicle>();
-                Debug.Log("touche");
-                if (vehicle != null)
-                {
-                    vehicle.InteractWithVehicle(this.gameObject);
-                }*/
+                // Interaction
             }
         }
 
-        // Set movement vector from input to be used in fixedupdate
-        Vector2 v = moveAction.ReadValue<Vector2>();
-        moveVector = transform.forward * v.y + transform.right * v.x;
+        Vector2 v = (moveAction != null) ? moveAction.ReadValue<Vector2>() : Vector2.zero;
+        moveVector = (transform.forward * v.y + transform.right * v.x).normalized;
 
-       // animController.SetFloat("HorSpeed", v.x);
-        //animController.SetFloat("VertSpeed", v.y);
-
-        // Increase current speed if running
-        if (runAction.IsPressed())
+        if (runAction != null && runAction.IsPressed())
         {
             curSpeed = moveSpeed + runCurve.Evaluate(runTimer / 1.5f) * runSpeed;
-
             runTimer += Time.deltaTime;
-
-            //animController.SetBool("Run", true);
         }
         else
         {
             curSpeed = moveSpeed;
             runTimer = 0;
-
-           // animController.SetBool("Run", false);
         }
 
-        // Eyes stabilization, find the focus point and make the headbob look at it
-        float maxDist = 30f;
-        float focusPointDist = maxDist;
-        Vector3 focusPoint = camHolder.position + camHolder.forward * maxDist;
-        if (Physics.Raycast(camHolder.position, camHolder.forward, out RaycastHit hitInf, maxDist, ~LayerMask.GetMask("Player")))
+        // --- CAMÉRA DIRECTE ET SANS INERTIE ---
+        Vector2 mouseDelta = (lookAction != null) ? lookAction.ReadValue<Vector2>() : Vector2.zero;
+
+        float mouseX = mouseDelta.x * sensitivity * 0.02f;
+        float mouseY = mouseDelta.y * sensitivity * 0.02f;
+
+        // Rotation horizontale instantanée
+        transform.Rotate(0f, mouseX, 0f);
+
+        // Rotation verticale instantanée
+        if (!invertYAxis)
+            mouseY = -mouseY;
+
+        curPitch += mouseY;
+        curPitch = Mathf.Clamp(curPitch, -85f, 85f);
+
+        if (camHolder != null)
         {
-            focusPoint = hitInf.point;
-            focusPointDist = hitInf.distance;
+            camHolder.localRotation = Quaternion.Euler(curPitch, 0, 0);
         }
 
-        // Vector of the headbob looking forward (this is what we want to change)
-        Vector3 forwardHeadBobVec = camHolder.forward;
-        Debug.DrawRay(mainCam.position, forwardHeadBobVec * focusPointDist, Color.red);
-
-        // Vector of the headbob looking toward the focus point (what we're trying to achieve)
-        Vector3 focusHeadbobVec = focusPoint - mainCam.position;
-        
-        // Eye vector debug (where the eye should focus theoretically)
-        Debug.DrawRay(camHolder.position, camHolder.forward * focusPointDist, Color.blue);
-
-        // Point the mainCam toward the focusPoint
-        if (eyeStabilization)
+        if (rb != null && rb.linearVelocity.magnitude > 0.1f && !jumping && grounded && camHolder != null)
         {
-            mainCam.rotation = Quaternion.LookRotation(focusHeadbobVec, Vector3.up);
-            Debug.DrawRay(mainCam.position, focusHeadbobVec, Color.orange);
-        }
-
-        // Headbob (the mainCam inside the camHolder)
-        if (rb.linearVelocity.magnitude > 0.01f && !jumping)
-        {
-            // Headbob position is set in world space to keep it straight
             mainCam.localPosition = new Vector3(0, headbobCurve.Evaluate(headbobTimer / headbobTime) * headbobAmp, 0);
-
             headbobTimer += Time.deltaTime;
             if (headbobTimer > headbobTime)
             {
                 headbobTimer = 0;
             }
         }
-
-        // Mouse look
-        Vector3 mouseDelta = lookAction.ReadValue<Vector2>() * sensitivity;
-        yRotation *= Quaternion.Euler(0, rotationSpeed * (mouseDelta.x / Screen.width) * Time.deltaTime, 0);
-
-        if (!invertYAxis)
-            mouseDelta.y = -mouseDelta.y;
-
-        float mouseMovement = rotationSpeed * (mouseDelta.y / Screen.height) * Time.deltaTime;
-        
-        // Limit upper and lower orientation of the camera
-        curPitch += mouseMovement;
-        curPitch = Mathf.Clamp(curPitch, -90, 90);
-
-        // camHolder holds the mainCam
-        camHolder.localRotation = Quaternion.Euler(curPitch, 0, 0);
     }
 
     private void FixedUpdate()
     {
-        rb.MoveRotation(yRotation);
+        if (isPaused)
+        {
+            rb.linearVelocity = Vector3.zero;
+            return;
+        }
 
         if (jump)
         {
@@ -215,17 +209,16 @@ public class PlayerController : MonoBehaviour
                 {
                     jumpTimer = 0;
                 }
-
                 jumping = true;
                 jump = false;
             }
         }
-        else if (jumping) // Jump impulsion phaze
+        else if (jumping) 
         {
-            float jumpVel = jumpCurve.Evaluate(jumpTimer / jumpDuration) * curJumpForce * Time.deltaTime;
+            float jumpVel = jumpCurve.Evaluate(jumpTimer / jumpDuration) * curJumpForce;
             rb.linearVelocity = new Vector3(rb.linearVelocity.x, jumpVel, rb.linearVelocity.z);
             
-            jumpTimer += Time.deltaTime;
+            jumpTimer += Time.fixedDeltaTime;
             if (jumpTimer > jumpDuration)
             {
                 jumpTimer = 0;
@@ -234,25 +227,26 @@ public class PlayerController : MonoBehaviour
         }
         else if (!jumping)
         {
-            if (grounded) // Regular movement
+            if (grounded) 
             {
-                rb.linearVelocity = moveVector * curSpeed * Time.deltaTime;
-
+                // Déplacement direct et net : s'arrête instantanément quand moveVector est nul
+                rb.linearVelocity = new Vector3(moveVector.x * curSpeed, rb.linearVelocity.y, moveVector.z * curSpeed);
             }
-            else // Jump descent phaze
+            else 
             {
-                rb.linearVelocity += moveVector * airMoveSpeed * Time.deltaTime;
-
-                rb.AddForce(Vector3.down * additionalGravity, ForceMode.Force);
+                Vector3 airVelocity = new Vector3(moveVector.x * airMoveSpeed, rb.linearVelocity.y, moveVector.z * airMoveSpeed);
+                rb.linearVelocity = Vector3.Lerp(rb.linearVelocity, airVelocity, 10f * Time.fixedDeltaTime);
+                rb.AddForce(Vector3.down * additionalGravity, ForceMode.Acceleration);
             }
         }
     }
 
     private void OnJump(InputAction.CallbackContext context)
     {
+        if (isPaused) return;
         jump = true;
-
         curJumpForce = ((float)context.duration / maxJumpTime) * maxJumpForce;
+        if (curJumpForce <= 0.1f) curJumpForce = maxJumpForce * 0.5f;
     }
 
     private IEnumerator GrowCoroutine(Transform seed)
@@ -260,8 +254,23 @@ public class PlayerController : MonoBehaviour
         for (float s = 0.1f; s < maxSeedSize; s += Time.deltaTime)
         {
             seed.localScale = new Vector3(s, s, s);
-
             yield return null;
         }
+    }
+
+    public void PauseGame()
+    {
+        isPaused = true;
+        Cursor.lockState = CursorLockMode.None;
+        Cursor.visible = true;
+        if (optionPanel != null) optionPanel.SetActive(true);
+    }
+
+    public void ResumeGame()
+    {
+        isPaused = false;
+        Cursor.lockState = CursorLockMode.Locked;
+        Cursor.visible = false;
+        if (optionPanel != null) optionPanel.SetActive(false);
     }
 }
