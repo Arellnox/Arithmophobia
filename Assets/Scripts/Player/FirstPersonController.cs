@@ -9,25 +9,20 @@ public class FirstPersonController : MonoBehaviour
     [SerializeField] private Transform seedPrefab;
 
     [Header("Move parameters")]
-    [SerializeField] private float moveSpeed = 6f;
-    [SerializeField] private float airMoveSpeed = 4f;
-    [SerializeField] private float runSpeed = 3f;
-    [SerializeField] private AnimationCurve runCurve;
-    [SerializeField] private AnimationCurve jumpCurve;
-    [SerializeField] private float additionalGravity = 10f;
-    [SerializeField] private float maxJumpForce = 8f;
-    [SerializeField] private float maxJumpTime = 1f;
-    [SerializeField] private float jumpDuration = 1.2f;
+    [SerializeField] private float moveSpeed = 5f;     // Vitesse extrêmement basse pour contrer l'échelle de la map
+    [SerializeField] private float runSpeedMultiplier = 1.2f;
+    [SerializeField] private float jumpForce = 3.5f;
+    [SerializeField] private float gravityMultiplier = 3f;
 
     [Header("Mouse look parameters")]
-    [SerializeField] private float sensitivity = 1.5f; // Sensibilité directe et nette
+    [SerializeField] private float sensitivity = 1.2f;
     [SerializeField] private Transform originTsfm;
     
     [Header("Headbob parameters")]
     [SerializeField] private AnimationCurve headbobCurve;
     [SerializeField] private Transform camHolder;
-    [SerializeField] private float headbobAmp = 0.05f;
-    [SerializeField] private float headbobTime = 0.5f;
+    [SerializeField] private float headbobAmp = 0.02f;
+    [SerializeField] private float headbobTime = 0.6f;
 
     [Header("UI / Options Integration")]
     [SerializeField] private GameObject optionPanel;
@@ -42,14 +37,10 @@ public class FirstPersonController : MonoBehaviour
     private CapsuleCollider coll;
 
     private float curSpeed;
-    private bool jump;
-    private bool jumping;
-    private Vector3 moveVector;
-    private float curJumpForce;
+    private bool jumpRequested;
+    private Vector3 moveDirection;
     private float curPitch;
     private bool grounded;
-    private float runTimer;
-    private float jumpTimer;
     private float headbobTimer;
 
     private InputActionMap actionMap;
@@ -91,17 +82,15 @@ public class FirstPersonController : MonoBehaviour
         if (rb != null)
         {
             rb.freezeRotation = true;
+            rb.useGravity = true;
+            rb.collisionDetectionMode = CollisionDetectionMode.Continuous;
         }
 
         curSpeed = moveSpeed;
-        moveVector = Vector3.zero;
-        jump = false;
-        jumping = false;
-        runTimer = 0;
-        jumpTimer = 0;
+        moveDirection = Vector3.zero;
+        jumpRequested = false;
         curPitch = camHolder ? camHolder.localEulerAngles.x : 0f;
         headbobTimer = 0;
-        curJumpForce = 0;
     }
 
     void OnEnable()
@@ -132,7 +121,7 @@ public class FirstPersonController : MonoBehaviour
         grounded = false;
         if (originTsfm != null && coll != null)
         {
-            if (Physics.SphereCast(originTsfm.position, coll.radius, -transform.up, out RaycastHit hit, (coll.height * 0.5f) - coll.radius + 0.2f, ~LayerMask.GetMask("Player")))
+            if (Physics.SphereCast(originTsfm.position, coll.radius * 0.9f, -transform.up, out RaycastHit hit, (coll.height * 0.5f) - coll.radius + 0.15f, ~LayerMask.GetMask("Player")))
             {
                 grounded = true;
             }
@@ -148,29 +137,25 @@ public class FirstPersonController : MonoBehaviour
         }
 
         Vector2 v = (moveAction != null) ? moveAction.ReadValue<Vector2>() : Vector2.zero;
-        moveVector = (transform.forward * v.y + transform.right * v.x).normalized;
+        moveDirection = (transform.forward * v.y + transform.right * v.x).normalized;
 
         if (runAction != null && runAction.IsPressed())
         {
-            curSpeed = moveSpeed + runCurve.Evaluate(runTimer / 1.5f) * runSpeed;
-            runTimer += Time.deltaTime;
+            curSpeed = moveSpeed * runSpeedMultiplier;
         }
         else
         {
             curSpeed = moveSpeed;
-            runTimer = 0;
         }
 
-        // --- CAMÉRA DIRECTE ET SANS INERTIE ---
+        // --- CAMÉRA ---
         Vector2 mouseDelta = (lookAction != null) ? lookAction.ReadValue<Vector2>() : Vector2.zero;
 
         float mouseX = mouseDelta.x * sensitivity * 0.02f;
         float mouseY = mouseDelta.y * sensitivity * 0.02f;
 
-        // Rotation horizontale instantanée
         transform.Rotate(0f, mouseX, 0f);
 
-        // Rotation verticale instantanée
         if (!invertYAxis)
             mouseY = -mouseY;
 
@@ -182,7 +167,7 @@ public class FirstPersonController : MonoBehaviour
             camHolder.localRotation = Quaternion.Euler(curPitch, 0, 0);
         }
 
-        if (rb != null && rb.linearVelocity.magnitude > 0.1f && !jumping && grounded && camHolder != null)
+        if (rb != null && moveDirection.magnitude > 0.1f && grounded && camHolder != null)
         {
             mainCam.localPosition = new Vector3(0, headbobCurve.Evaluate(headbobTimer / headbobTime) * headbobAmp, 0);
             headbobTimer += Time.deltaTime;
@@ -201,52 +186,35 @@ public class FirstPersonController : MonoBehaviour
             return;
         }
 
-        if (jump)
+        Vector3 targetVelocity = new Vector3(moveDirection.x * curSpeed, rb.linearVelocity.y, moveDirection.z * curSpeed);
+        
+        if (grounded)
         {
-            if (!jumping)
+            rb.linearVelocity = Vector3.Lerp(rb.linearVelocity, targetVelocity, 20f * Time.fixedDeltaTime);
+
+            if (jumpRequested)
             {
-                if (grounded)
-                {
-                    jumpTimer = 0;
-                }
-                jumping = true;
-                jump = false;
+                rb.linearVelocity = new Vector3(rb.linearVelocity.x, jumpForce, rb.linearVelocity.z);
+                jumpRequested = false;
             }
         }
-        else if (jumping) 
+        else
         {
-            float jumpVel = jumpCurve.Evaluate(jumpTimer / jumpDuration) * curJumpForce;
-            rb.linearVelocity = new Vector3(rb.linearVelocity.x, jumpVel, rb.linearVelocity.z);
-            
-            jumpTimer += Time.fixedDeltaTime;
-            if (jumpTimer > jumpDuration)
-            {
-                jumpTimer = 0;
-                jumping = false;
-            }
+            Vector3 airVelocity = new Vector3(moveDirection.x * (curSpeed * 0.8f), rb.linearVelocity.y, moveDirection.z * (curSpeed * 0.8f));
+            rb.linearVelocity = Vector3.Lerp(rb.linearVelocity, airVelocity, 5f * Time.fixedDeltaTime);
+            rb.AddForce(Physics.gravity * gravityMultiplier, ForceMode.Acceleration);
         }
-        else if (!jumping)
-        {
-            if (grounded) 
-            {
-                // Déplacement direct et net : s'arrête instantanément quand moveVector est nul
-                rb.linearVelocity = new Vector3(moveVector.x * curSpeed, rb.linearVelocity.y, moveVector.z * curSpeed);
-            }
-            else 
-            {
-                Vector3 airVelocity = new Vector3(moveVector.x * airMoveSpeed, rb.linearVelocity.y, moveVector.z * airMoveSpeed);
-                rb.linearVelocity = Vector3.Lerp(rb.linearVelocity, airVelocity, 10f * Time.fixedDeltaTime);
-                rb.AddForce(Vector3.down * additionalGravity, ForceMode.Acceleration);
-            }
-        }
+
+        jumpRequested = false;
     }
 
     private void OnJump(InputAction.CallbackContext context)
     {
         if (isPaused) return;
-        jump = true;
-        curJumpForce = ((float)context.duration / maxJumpTime) * maxJumpForce;
-        if (curJumpForce <= 0.1f) curJumpForce = maxJumpForce * 0.5f;
+        if (grounded)
+        {
+            jumpRequested = true;
+        }
     }
 
     private IEnumerator GrowCoroutine(Transform seed)
