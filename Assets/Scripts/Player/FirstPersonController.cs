@@ -241,4 +241,14 @@ public class FirstPersonController : MonoBehaviour
         Cursor.visible = false;
         if (optionPanel != null) optionPanel.SetActive(false);
     }
+    
+    public void QuitGame()
+    {
+        Debug.Log("Quit Game requested...");
+#if UNITY_EDITOR
+        UnityEditor.EditorApplication.isPlaying = false;
+#else
+    Application.Quit();
+#endif
+    }
 }
