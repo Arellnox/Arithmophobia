@@ -4155,13 +4155,17 @@ PrefabInstance:
       propertyPath: optionPanel
       value: 
       objectReference: {fileID: 650860847}
+    - target: {fileID: 6202799059201081417, guid: 67d7035d01d86df438117c9ff028298a, type: 3}
+      propertyPath: sensitivity
+      value: 25
+      objectReference: {fileID: 0}
     - target: {fileID: 7476989065042815785, guid: 67d7035d01d86df438117c9ff028298a, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0.073128164
       objectReference: {fileID: 0}
     - target: {fileID: 7476989065042815785, guid: 67d7035d01d86df438117c9ff028298a, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 1.357
+      value: 0.964
       objectReference: {fileID: 0}
     - target: {fileID: 7476989065042815785, guid: 67d7035d01d86df438117c9ff028298a, type: 3}
       propertyPath: m_LocalPosition.z
