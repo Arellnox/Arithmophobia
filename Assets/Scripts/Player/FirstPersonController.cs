@@ -51,6 +51,8 @@ public class FirstPersonController : MonoBehaviour
 
     private bool isPaused = false;
 
+    private RoomTag heldTag = null; // Étiquette tenue en main par le joueur
+
     void Awake()
     {
         if (inputActions != null)
@@ -110,10 +112,44 @@ public class FirstPersonController : MonoBehaviour
 
     void Update()
     {
-        if (Keyboard.current != null && Keyboard.current.escapeKey.wasPressedThisFrame)
+        if (Keyboard.current != null && Keyboard.current.eKey.wasPressedThisFrame)
         {
-            if (isPaused) ResumeGame();
-            else PauseGame();
+            Ray ray = new Ray(mainCam.position, mainCam.forward);
+            if (Physics.Raycast(ray, out RaycastHit hitInfo, 100f))
+            {
+                // 1. Interaction avec une étiquette au sol
+                RoomTag floorTag = hitInfo.collider.GetComponent<RoomTag>();
+                if (floorTag != null && heldTag == null)
+                {
+                    heldTag = floorTag;
+                    heldTag.PickUp();
+                    Debug.Log("Étiquette ramassée en main : " + heldTag.tagID);
+                    return;
+                }
+
+                // 2. Interaction avec la porte
+                DoorScript.Door door = hitInfo.collider.GetComponent<DoorScript.Door>();
+                if (door != null)
+                {
+                    if (heldTag != null)
+                    {
+                        // Le joueur pose/échange son étiquette sur la porte
+                        RoomTag returnedTag = door.SwapTag(heldTag);
+                        heldTag = returnedTag; // Si la porte avait déjà une étiquette, le joueur récupère l'ancienne en main
+                        Debug.Log("Étiquette placée sur la porte.");
+                    }
+                    else
+                    {
+                        // Pas d'étiquette en main, on essaie d'ouvrir la porte
+                        door.OpenDoor();
+                    }
+                }
+            }
+            if (Keyboard.current != null && Keyboard.current.escapeKey.wasPressedThisFrame)
+            {
+                if (isPaused) ResumeGame();
+                else PauseGame();
+            }
         }
 
         if (isPaused) return;

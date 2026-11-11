@@ -17,6 +17,8 @@ namespace DoorScript
         public RoomTag currentTag;
         [Tooltip("Point exact où la salle doit s'instancier derrière la porte")]
         public Transform roomSpawnPoint;
+        [Tooltip("Point où l'étiquette s'affiche visuellement sur la porte")]
+        [SerializeField] private Transform tagSlotPoint;
 
         private GameObject activeRoomInstance;
         private bool hasTriggeredTransition = false;
@@ -24,6 +26,13 @@ namespace DoorScript
         void Start()
         {
             asource = GetComponent<AudioSource>();
+
+            // Si une étiquette est déjà assignée au démarrage, on la positionne sur le slot
+            if (currentTag != null && tagSlotPoint != null)
+            {
+                currentTag.DropOrPlace(tagSlotPoint.position, tagSlotPoint.rotation);
+                currentTag.transform.SetParent(tagSlotPoint);
+            }
         }
 
         void Update()
@@ -46,7 +55,7 @@ namespace DoorScript
             if (currentTag == null || currentTag.correspondingRoomPrefab == null)
             {
                 Debug.Log("Impossible d'ouvrir : aucune étiquette valide n'est fixée sur la porte.");
-                asource.PlayOneShot(closeDoor);
+                //asource.PlayOneShot(closeDoor);
                 return;
             }
 
@@ -75,10 +84,34 @@ namespace DoorScript
             }
         }
 
-        public void AttachTag(RoomTag newTag)
+        // Gère la pose ou l'échange d'étiquette sur la porte
+        public RoomTag SwapTag(RoomTag incomingTag)
         {
-            currentTag = newTag;
+            RoomTag oldTag = currentTag;
+
+            // Installe la nouvelle étiquette sur la porte
+            currentTag = incomingTag;
+            if (currentTag != null && tagSlotPoint != null)
+            {
+                currentTag.DropOrPlace(tagSlotPoint.position, tagSlotPoint.rotation);
+                currentTag.transform.SetParent(tagSlotPoint);
+            }
+
+            // Nettoie l'ancienne salle puisque l'étiquette change
             hasTriggeredTransition = false;
+            if (activeRoomInstance != null)
+            {
+                Destroy(activeRoomInstance);
+            }
+
+            // Si la porte était ouverte, on la referme par sécurité lors du changement d'étiquette
+            if (open)
+            {
+                open = false;
+                asource.PlayOneShot(closeDoor);
+            }
+
+            return oldTag; // Renvoie l'ancienne étiquette (pour que le joueur la récupère en main)
         }
     }
 }
