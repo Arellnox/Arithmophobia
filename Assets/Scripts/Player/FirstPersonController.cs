@@ -17,7 +17,7 @@ public class FirstPersonController : MonoBehaviour
     [Header("Mouse look parameters")]
     [SerializeField] private float sensitivity = 1.2f;
     [SerializeField] private Transform originTsfm;
-    
+
     [Header("Headbob parameters")]
     [SerializeField] private AnimationCurve headbobCurve;
     [SerializeField] private Transform camHolder;
@@ -29,9 +29,10 @@ public class FirstPersonController : MonoBehaviour
 
     [Header("Others")]
     [SerializeField] private float maxSeedSize = 10;
+    [SerializeField] private float interactRange = 3f;
 
     private bool invertYAxis = false;
-    
+
     private Transform mainCam;
     private Rigidbody rb;
     private CapsuleCollider coll;
@@ -50,6 +51,8 @@ public class FirstPersonController : MonoBehaviour
     private InputAction jumpAction;
 
     private bool isPaused = false;
+
+    private RoomTag heldTag = null; // Étiquette tenue en main par le joueur
 
     void Awake()
     {
@@ -95,12 +98,12 @@ public class FirstPersonController : MonoBehaviour
 
     void OnEnable()
     {
-        if (actionMap != null) { try { actionMap.Enable(); } catch {} }
+        if (actionMap != null) { try { actionMap.Enable(); } catch { } }
     }
 
     void OnDisable()
     {
-        if (actionMap != null) { try { actionMap.Disable(); } catch {} }
+        if (actionMap != null) { try { actionMap.Disable(); } catch { } }
     }
 
     void Start()
@@ -118,21 +121,18 @@ public class FirstPersonController : MonoBehaviour
 
         if (isPaused) return;
 
+        if (Keyboard.current != null)
+        {
+            if (Keyboard.current.eKey.wasPressedThisFrame) InteractWithTags();   // E : étiquettes (ramasser / poser / échanger / reposer)
+            if (Keyboard.current.fKey.wasPressedThisFrame) InteractWithDoor();   // F : ouvrir / fermer la porte
+        }
+
         grounded = false;
         if (originTsfm != null && coll != null)
         {
             if (Physics.SphereCast(originTsfm.position, coll.radius * 0.9f, -transform.up, out RaycastHit hit, (coll.height * 0.5f) - coll.radius + 0.15f, ~LayerMask.GetMask("Player")))
             {
                 grounded = true;
-            }
-        }
-
-        if (Keyboard.current != null && Keyboard.current.eKey.wasPressedThisFrame)
-        {
-            Ray ray = new Ray(mainCam.position, mainCam.forward);
-            if (Physics.Raycast(ray, out RaycastHit hitInfo, 10f))
-            {
-                // Interaction
             }
         }
 
@@ -178,6 +178,54 @@ public class FirstPersonController : MonoBehaviour
         }
     }
 
+    // Raycast depuis le centre de la caméra
+    private bool TryRaycast(out RaycastHit hit)
+    {
+        Ray ray = new Ray(mainCam.position, mainCam.forward);
+        return Physics.Raycast(ray, out hit, interactRange, ~0, QueryTriggerInteraction.Ignore);
+    }
+
+    // F : ouvre / ferme la porte (même si on vise l'étiquette qui est dessus)
+    private void InteractWithDoor()
+    {
+        if (!TryRaycast(out RaycastHit hit)) return;
+
+        DoorScript.Door door = hit.collider.GetComponentInParent<DoorScript.Door>();
+        if (door != null) door.OpenDoor();
+    }
+
+    // E : ramasser, poser, échanger ou reposer une étiquette
+    private void InteractWithTags()
+    {
+        if (!TryRaycast(out RaycastHit hit)) return;
+
+        DoorScript.Door door = hit.collider.GetComponentInParent<DoorScript.Door>();
+        RoomTag roomTag = hit.collider.GetComponent<RoomTag>();
+
+        if (door != null)
+        {
+            // Étiquette ou panneau de la porte : poser, échanger ou reprendre l'étiquette
+            if (roomTag != null || heldTag != null)
+                heldTag = door.SwapTag(heldTag);
+        }
+        else if (roomTag != null && heldTag == null)
+        {
+            // Étiquette au sol : ramassage
+            heldTag = roomTag;
+            roomTag.PickUp();
+        }
+        else if (heldTag != null)
+        {
+            // On ne repose l'étiquette que sur une surface horizontale tournée vers le haut (sol, table...)
+            if (Vector3.Dot(hit.normal, Vector3.up) < 0.7f) return;
+
+            // Face avec le chiffre vers le haut, texte lisible depuis la position du joueur
+            Quaternion rot = Quaternion.LookRotation(-hit.normal, transform.forward);
+            heldTag.DropOrPlace(hit.point + hit.normal * 0.02f, rot);
+            heldTag = null;
+        }
+    }
+
     private void FixedUpdate()
     {
         if (isPaused)
@@ -187,7 +235,7 @@ public class FirstPersonController : MonoBehaviour
         }
 
         Vector3 targetVelocity = new Vector3(moveDirection.x * curSpeed, rb.linearVelocity.y, moveDirection.z * curSpeed);
-        
+
         if (grounded)
         {
             rb.linearVelocity = Vector3.Lerp(rb.linearVelocity, targetVelocity, 20f * Time.fixedDeltaTime);
@@ -241,7 +289,7 @@ public class FirstPersonController : MonoBehaviour
         Cursor.visible = false;
         if (optionPanel != null) optionPanel.SetActive(false);
     }
-    
+
     public void QuitGame()
     {
         Debug.Log("Quit Game requested...");
