@@ -216,8 +216,12 @@ public class FirstPersonController : MonoBehaviour
         }
         else if (heldTag != null)
         {
-            // On repose l'étiquette sur la surface visée
-            heldTag.DropOrPlace(hit.point + hit.normal * 0.02f, Quaternion.LookRotation(hit.normal));
+            // On ne repose l'étiquette que sur une surface horizontale tournée vers le haut (sol, table...)
+            if (Vector3.Dot(hit.normal, Vector3.up) < 0.7f) return;
+
+            // Face avec le chiffre vers le haut, texte lisible depuis la position du joueur
+            Quaternion rot = Quaternion.LookRotation(-hit.normal, transform.forward);
+            heldTag.DropOrPlace(hit.point + hit.normal * 0.02f, rot);
             heldTag = null;
         }
     }
