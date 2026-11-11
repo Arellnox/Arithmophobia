@@ -9,9 +9,6 @@ public class RoomTag : MonoBehaviour
     [Tooltip("Le prefab de la salle correspondante à associer")]
     public GameObject correspondingRoomPrefab;
 
-    [Tooltip("Cocher pour l'étiquette qui mène à la vraie sortie (le lucky number)")]
-    public bool isExit;
-
     [Header("UI Reference")]
     [SerializeField] private TextMeshProUGUI textMeshPro;
 
@@ -33,27 +30,18 @@ public class RoomTag : MonoBehaviour
         }
     }
 
-    // Ramassage : on détache l'étiquette (de la porte ou de la salle) puis on la cache.
-    // Détacher évite qu'elle soit détruite avec la salle dont elle faisait partie.
+    // Méthode quand le joueur ramasse l'étiquette (on la cache de la scène)
     public void PickUp()
     {
-        transform.SetParent(null);
         gameObject.SetActive(false);
     }
 
-    // Pose libre (au sol, sur une table...)
+    // Méthode quand on la pose (au sol ou sur la porte)
     public void DropOrPlace(Vector3 position, Quaternion rotation)
     {
         transform.position = position;
         transform.rotation = rotation;
         gameObject.SetActive(true);
         UpdateTagVisuals();
-    }
-
-    // Pose sur un emplacement précis (le slot de la porte)
-    public void PlaceOn(Transform slot)
-    {
-        DropOrPlace(slot.position, slot.rotation);
-        transform.SetParent(slot, true);
     }
 }
