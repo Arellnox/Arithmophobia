@@ -3,7 +3,7 @@ using TMPro;
 
 public class RoomTag : MonoBehaviour
 {
-    [Tooltip("Le numéro de la salle")]
+    [Tooltip("Le numéro de la salle (ex: 8, 666, 13)")]
     public int tagID;
 
     [Tooltip("Le prefab de la salle correspondante à associer")]
@@ -33,6 +33,7 @@ public class RoomTag : MonoBehaviour
         }
     }
 
+
     // Ramassage : on détache l'étiquette (de la porte ou de la salle) puis on la cache.
     // Détacher évite qu'elle soit détruite avec la salle dont elle faisait partie.
     public void PickUp()
@@ -56,4 +57,3 @@ public class RoomTag : MonoBehaviour
         DropOrPlace(slot.position, slot.rotation);
         transform.SetParent(slot, true);
     }
-}

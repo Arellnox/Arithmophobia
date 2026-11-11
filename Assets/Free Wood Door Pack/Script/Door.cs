@@ -18,8 +18,6 @@ namespace DoorScript
         public RoomTag currentTag;
         [Tooltip("Point exact où la salle doit s'instancier derrière la porte")]
         public Transform roomSpawnPoint;
-        [Tooltip("Point où l'étiquette s'affiche visuellement sur la porte")]
-        [SerializeField] private Transform tagSlotPoint;
 
         [Header("Events")]
         [Tooltip("Appelé quand la porte s'ouvre sur l'étiquette de sortie (fin du jeu)")]
@@ -36,11 +34,13 @@ namespace DoorScript
         {
             asource = GetComponent<AudioSource>();
 
+
             // Si une étiquette est déjà assignée au démarrage, on la positionne sur le slot
             if (currentTag != null && tagSlotPoint != null)
             {
                 currentTag.PlaceOn(tagSlotPoint);
             }
+
         }
 
         void Update()
@@ -64,6 +64,7 @@ namespace DoorScript
             if (!open && (currentTag == null || currentTag.correspondingRoomPrefab == null))
             {
                 Debug.Log("Impossible d'ouvrir : aucune étiquette valide n'est fixée sur la porte.");
+
                 return;
             }
 
@@ -96,6 +97,7 @@ namespace DoorScript
                 onExitOpened?.Invoke();
             }
         }
+
 
         // Pose ou échange l'étiquette de la porte.
         // Renvoie ce que le joueur doit avoir en main après l'opération.
@@ -132,6 +134,7 @@ namespace DoorScript
             hasTriggeredTransition = false;
 
             return oldTag;
+
         }
     }
 }

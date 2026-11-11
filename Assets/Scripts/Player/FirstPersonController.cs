@@ -52,8 +52,6 @@ public class FirstPersonController : MonoBehaviour
 
     private bool isPaused = false;
 
-    private RoomTag heldTag = null; // Étiquette tenue en main par le joueur
-
     void Awake()
     {
         if (inputActions != null)
