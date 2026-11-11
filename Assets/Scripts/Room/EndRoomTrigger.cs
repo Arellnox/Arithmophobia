@@ -14,6 +14,7 @@ public class EndRoomTrigger : MonoBehaviour
             if (player != null)
             {
                 player.PauseGame(); // Ouvre l'optionPanel et débloque la souris
+                Debug.Log("Menu ouvert !");
             }
         }
     }
