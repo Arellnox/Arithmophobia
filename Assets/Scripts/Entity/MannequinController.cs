@@ -1,10 +1,14 @@
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class MannequinController : MonoBehaviour
 {
     [Header("Movement")]
     [SerializeField] private float moveSpeed = 3f;
     
+    [Header("Lobby")]
+    [SerializeField] private string lobbySceneName = "MainScene";
+
     private Rigidbody _rb;
     private Transform _playerCamera;
 
@@ -21,15 +25,13 @@ public class MannequinController : MonoBehaviour
     {
         if (_playerCamera == null) return;
 
-        // Vérifie si le joueur regarde dans la direction du mannequin
         if (CheckIfPlayerIsLookingAtMe())
         {
-            // LE MANNEQUIN BOUGE (puisqu'on le regarde - ange pleureur inversé)
             MoveTowardsPlayer();
         }
         else
         {
-            // IL S'ARRÊTE NET (dès qu'on ne le regarde plus)
+            // Il s'arrête net
             _rb.linearVelocity = new Vector3(0f, _rb.linearVelocity.y, 0f);
         }
     }
@@ -37,23 +39,26 @@ public class MannequinController : MonoBehaviour
     bool CheckIfPlayerIsLookingAtMe()
     {
         Vector3 directionToMonster = (transform.position - _playerCamera.position).normalized;
-
-        // Le Dot Product vérifie si le mannequin est dans l'écran du joueur (champ de vision)
-        // 0.3 ou 0.4 permet une tolérance plus large pour pas que ça bloque s'il est légèrement sur le côté de l'écran
-        float dotThreshold = 0.3f; 
         float dotProduct = Vector3.Dot(_playerCamera.forward, directionToMonster);
 
-        if (dotProduct > dotThreshold)
+        // Seuil du champ de vision (ajuste si besoin)
+        if (dotProduct > 0.3f)
         {
-            // Vérification des murs (Raycast)
+            float distanceToMonster = Vector3.Distance(_playerCamera.position, transform.position);
+
             RaycastHit hit;
-            if (Physics.Raycast(_playerCamera.position, directionToMonster, out hit, Mathf.Infinity))
+            // On lance un raycast depuis la caméra vers le mannequin
+            if (Physics.Raycast(_playerCamera.position, directionToMonster, out hit, distanceToMonster))
             {
-                if (hit.transform == transform || hit.transform.IsChildOf(transform))
+                // Si le premier objet touché N'EST PAS le mannequin (ou un de ses enfants), c'est qu'un mur bloque !
+                if (hit.transform != transform && !hit.transform.IsChildOf(transform))
                 {
-                    return true;
+                    return false; // Il y a un mur ou un objet entre nous
                 }
             }
+
+            // Si rien n'a bloqué le raycast en chemin, la vue est totalement dégagée
+            return true;
         }
 
         return false;
@@ -61,19 +66,26 @@ public class MannequinController : MonoBehaviour
 
     void MoveTowardsPlayer()
     {
-        // Direction vers le joueur sur le plan horizontal (XZ)
         Vector3 targetDirection = (_playerCamera.position - transform.position).normalized;
         targetDirection.y = 0f;
 
-        // Rotation optionnelle pour qu'il regarde le joueur en avançant
         if (targetDirection != Vector3.zero)
         {
             Quaternion targetRotation = Quaternion.LookRotation(targetDirection);
             transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, Time.fixedDeltaTime * 15f);
         }
 
-        // APPLICATION DE LA VITESSE LINEAIRE 
         Vector3 moveVelocity = targetDirection * moveSpeed;
         _rb.linearVelocity = new Vector3(moveVelocity.x, _rb.linearVelocity.y, moveVelocity.z);
+    }
+
+    // Détection du contact avec le joueur pour retourner au lobby
+    private void OnCollisionEnter(Collision collision)
+    {
+        if (collision.gameObject.CompareTag("Player"))
+        {
+            Debug.Log("Le monstre a attrapé le joueur ! Retour au lobby.");
+            SceneManager.LoadScene(lobbySceneName);
+        }
     }
 }
