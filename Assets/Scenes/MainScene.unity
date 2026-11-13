@@ -3120,7 +3120,7 @@ MonoBehaviour:
 
     <b>LAST NAME:</b> LAMBERT
 
-    <b>FIRST NAME:</b> Isabelle
+    <b>FIRST NAME:</b> Billy
 
     <b>DATE OF BIRTH:</b> November 13, 1946 (age 26)
 
@@ -6132,7 +6132,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 79264283c8b494d419a1147d41b751b5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::NoteSheet
-  title: OBSERVATION, LAMBERT A.
+  title: OBSERVATION, LAMBERT B.
   content: '<b>Day 1</b>, Nurse M.
 
     Calm, polite, cooperative. Reports hearing a voice that repeats "thirteen." No other disturbance noted.
