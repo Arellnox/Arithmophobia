@@ -1431,7 +1431,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 382, y: -206.7}
+  m_AnchoredPosition: {x: 496, y: -465}
   m_SizeDelta: {x: 200, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &408275092
@@ -1923,7 +1923,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0}
   m_AnchorMax: {x: 0.5, y: 0}
-  m_AnchoredPosition: {x: -21.399994, y: 37.1}
+  m_AnchoredPosition: {x: -7, y: 78}
   m_SizeDelta: {x: 198, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &504032888
@@ -2795,7 +2795,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
-  m_Color: {r: 0.5882353, g: 0.38039216, b: 0.19215687, a: 0.392}
+  m_Color: {r: 0.084905684, g: 0.08133292, b: 0.07809721, a: 0.95686275}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -3082,6 +3082,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.y
       value: -32.951
       objectReference: {fileID: 0}
+    - target: {fileID: 2386228, guid: 92794c55695387544b0181380f46d6ec, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 383da5efdb669b747b7939dd71c3f993, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -3110,10 +3114,45 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 79264283c8b494d419a1147d41b751b5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::NoteSheet
-  title: Ceci est Feur
-  content: "Feur\nFeur\nCoubeh\napanian\nta m\xE8re"
+  title: ADMISSION FORM, NO. 0013
+  content: '<b>GENERAL HOSPITAL, WARD C</b>
+
+
+    <b>LAST NAME:</b> LAMBERT
+
+    <b>FIRST NAME:</b> Isabelle
+
+    <b>DATE OF BIRTH:</b> November 13, 1946 (age 26)
+
+    <b>SEX:</b> M
+
+    <b>BLOOD TYPE:</b> O negative
+
+    <b>HEIGHT / WEIGHT:</b> 5 ft 10 in / 157 lb
+
+    <b>OCCUPATION:</b> Statistician (insurance)
+
+    <b>ROOM:</b> 13
+
+
+    <b>ADMITTED:</b> September 23, 1973, voluntary
+
+
+    <b>REASON FOR ADMISSION</b>
+
+    The patient hears a voice that repeats "thirteen" at regular intervals. He describes it as "neutral, patient, without malice." No other symptoms. No known psychiatric history.
+
+
+    <b>DIAGNOSIS</b>
+
+    Schizophrenia (to be confirmed)
+
+
+    <b>TREATMENT</b>
+
+    Antipsychotics. Continuous observation.'
   reaction:
-    text: 
+    text: "<i>Thirteen\u2026 Was I really hearing that voice? </i>"
     clip: {fileID: 0}
   reactionPlayed: 0
 --- !u!65 &787267050
@@ -3426,11 +3465,11 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 682472106}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -97, y: 175}
-  m_SizeDelta: {x: 200, y: 50}
-  m_Pivot: {x: 0.5, y: 0.5}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 1, y: 1}
+  m_AnchoredPosition: {x: 0.000030517578, y: 0}
+  m_SizeDelta: {x: 0, y: 50}
+  m_Pivot: {x: 0.5, y: 1}
 --- !u!114 &923262651
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3478,8 +3517,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 36
-  m_fontSizeBase: 36
+  m_fontSize: 40
+  m_fontSizeBase: 40
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
@@ -3517,7 +3556,7 @@ MonoBehaviour:
   m_VertexBufferAutoSizeReduction: 0
   m_useMaxVisibleDescender: 1
   m_pageToDisplay: 1
-  m_margin: {x: 0, y: 0, z: -162.20001, w: 0}
+  m_margin: {x: 0, y: 0, z: -1.0234679, w: -58.16249}
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
   m_hasFontAssetChanged: 0
@@ -5133,10 +5172,10 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 682472106}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 200, y: 50}
+  m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1486687496
 MonoBehaviour:
@@ -5185,12 +5224,12 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 28
+  m_fontSize: 26
   m_fontSizeBase: 28
   m_fontWeight: 400
-  m_enableAutoSizing: 0
-  m_fontSizeMin: 18
-  m_fontSizeMax: 72
+  m_enableAutoSizing: 1
+  m_fontSizeMin: 16
+  m_fontSizeMax: 26
   m_fontStyle: 0
   m_HorizontalAlignment: 1
   m_VerticalAlignment: 256
@@ -5204,7 +5243,7 @@ MonoBehaviour:
   m_charWidthMaxAdj: 0
   m_TextWrappingMode: 1
   m_wordWrappingRatios: 0.4
-  m_overflowMode: 0
+  m_overflowMode: 3
   m_linkedTextComponent: {fileID: 0}
   parentLinkedComponent: {fileID: 0}
   m_enableKerning: 0
@@ -5224,7 +5263,7 @@ MonoBehaviour:
   m_VertexBufferAutoSizeReduction: 0
   m_useMaxVisibleDescender: 1
   m_pageToDisplay: 1
-  m_margin: {x: -126.19278, y: -95.691986, z: -131.45447, w: -173.50302}
+  m_margin: {x: 3.0758362, y: 50.693817, z: -0.11285394, w: -2.5074768}
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
   m_hasFontAssetChanged: 0
@@ -5840,10 +5879,20 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 2386228, guid: 92794c55695387544b0181380f46d6ec, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 383da5efdb669b747b7939dd71c3f993, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 136380, guid: 92794c55695387544b0181380f46d6ec, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1665512599}
+    - targetCorrespondingSourceObject: {fileID: 136380, guid: 92794c55695387544b0181380f46d6ec, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1665512598}
   m_SourcePrefab: {fileID: 100100000, guid: 92794c55695387544b0181380f46d6ec, type: 3}
 --- !u!4 &1626832062 stripped
 Transform:
@@ -6066,6 +6115,90 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 472968, guid: 69e2513b7eb2a5a4e9e6e57f72a30362, type: 3}
   m_PrefabInstance: {fileID: 1661848993}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &1665512595 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 136380, guid: 92794c55695387544b0181380f46d6ec, type: 3}
+  m_PrefabInstance: {fileID: 1626832061}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1665512598
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1665512595}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 79264283c8b494d419a1147d41b751b5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::NoteSheet
+  title: OBSERVATION, LAMBERT A.
+  content: '<b>Day 1</b>, Nurse M.
+
+    Calm, polite, cooperative. Reports hearing a voice that repeats "thirteen." No other disturbance noted.
+
+
+    <b>Day 3</b>, Nurse M.
+
+    Says the voice is gone and that he feels fine. <i>Denial of illness.</i>
+
+
+    <b>Day 8</b>, Dr. R.
+
+    Waits outside the dining hall an hour before mealtime. <i>Oral fixation.</i>
+
+    Keeps telling the other patients he is not ill. One of them replies: "I know."
+
+
+    <b>Day 13</b>, Nurse L.
+
+    Counts the hallway tiles out loud. Claims that his bedroom door "doesn''t always open onto the hallway." <i>Delusion becoming systematized.</i>
+
+
+    <b>Day 24</b>, Dr. R.
+
+    Now answers only with numbers. Says he is "looking for the right number." Says people no longer see him. Talks to his door.
+
+    <i>Depersonalization. Dosage increased.</i>
+
+
+    <b>Day 41</b>, Nurse M.
+
+    No longer eats. No longer sleeps. Writes "13" on the wall every day. Cleaned off, started again.
+
+    <i>(Handwritten note in the margin: "What if he was right?")</i>
+
+
+    <b>Day 52, November 13</b>, Dr. R.
+
+    Patient did not answer roll call. Room 13: bed unmade, door closed from the inside.
+
+    File closed: <b>schizophrenia in remission.</b>'
+  reaction:
+    text: "<i>They blamed everything on the illness. What if that wasn\u2019t it?</i>"
+    clip: {fileID: 0}
+  reactionPlayed: 0
+--- !u!65 &1665512599
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1665512595}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 35.20263, y: 2.3787985, z: 47.384113}
+  m_Center: {x: -1.1255393, y: 0.000007636845, z: -2.6886969}
 --- !u!1001 &1666776820
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -7366,12 +7499,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0cd44c1031e13a943bb63640046fad76, type: 3}
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.CanvasScaler
-  m_UiScaleMode: 0
+  m_UiScaleMode: 1
   m_ReferencePixelsPerUnit: 100
   m_ScaleFactor: 1
-  m_ReferenceResolution: {x: 800, y: 600}
+  m_ReferenceResolution: {x: 1920, y: 1080}
   m_ScreenMatchMode: 0
-  m_MatchWidthOrHeight: 0
+  m_MatchWidthOrHeight: 0.5
   m_PhysicalUnit: 3
   m_FallbackScreenDPI: 96
   m_DefaultSpriteDPI: 96
