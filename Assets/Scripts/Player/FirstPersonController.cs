@@ -1,6 +1,7 @@
 using System.Collections;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using TMPro;
 
 public class FirstPersonController : MonoBehaviour
 {
@@ -30,6 +31,18 @@ public class FirstPersonController : MonoBehaviour
     [Header("Others")]
     [SerializeField] private float maxSeedSize = 10;
     [SerializeField] private float interactRange = 3f;
+
+    private bool isReading = false; // true pendant la lecture d'une fiche
+
+    [Header("Interaction prompts")]
+    [SerializeField] private TextMeshProUGUI promptText;
+    [SerializeField] private string readPrompt = "Press E to read";
+    [SerializeField] private string takePrompt = "Press E to take";
+    [SerializeField] private string putDownPrompt = "Press E to put down";
+    [SerializeField] private string placeTagPrompt = "Press E to place the tag";
+    [SerializeField] private string swapTagPrompt = "Press E to swap the tag";
+    [SerializeField] private string openDoorPrompt = "Press F to open";
+    [SerializeField] private string closeDoorPrompt = "Press F to close";
 
     private bool invertYAxis = false;
 
@@ -113,13 +126,31 @@ public class FirstPersonController : MonoBehaviour
 
     void Update()
     {
+        // Lecture d'une fiche : seuls E et Échap sont actifs, ils referment la fiche
+        if (isReading)
+        {
+            SetPrompt(null);
+            if (Keyboard.current != null &&
+                (Keyboard.current.eKey.wasPressedThisFrame || Keyboard.current.escapeKey.wasPressedThisFrame))
+            {
+                CloseNote();
+            }
+            return;
+        }
+
         if (Keyboard.current != null && Keyboard.current.escapeKey.wasPressedThisFrame)
         {
             if (isPaused) ResumeGame();
             else PauseGame();
         }
 
-        if (isPaused) return;
+        if (isPaused)
+        {
+            SetPrompt(null);
+            return;
+        }
+
+        UpdatePrompt();
 
         if (Keyboard.current != null)
         {
@@ -199,6 +230,14 @@ public class FirstPersonController : MonoBehaviour
     {
         if (!TryRaycast(out RaycastHit hit)) return;
 
+        // Fiche de note : on la lit
+        NoteSheet note = hit.collider.GetComponentInParent<NoteSheet>();
+        if (note != null)
+        {
+            OpenNote(note);
+            return;
+        }
+
         DoorScript.Door door = hit.collider.GetComponentInParent<DoorScript.Door>();
         RoomTag roomTag = hit.collider.GetComponent<RoomTag>();
 
@@ -226,8 +265,80 @@ public class FirstPersonController : MonoBehaviour
         }
     }
 
+    // Affiche l'indication d'interaction selon ce que le joueur regarde
+    private void UpdatePrompt()
+    {
+        if (promptText == null) return;
+
+        string prompt = null;
+
+        if (TryRaycast(out RaycastHit hit))
+        {
+            DoorScript.Door door = hit.collider.GetComponentInParent<DoorScript.Door>();
+            RoomTag roomTag = hit.collider.GetComponent<RoomTag>();
+
+            if (hit.collider.GetComponentInParent<NoteSheet>() != null)
+            {
+                prompt = readPrompt;
+            }
+            else if (door != null)
+            {
+                // Ligne "étiquette" (E) : seulement si la porte est fermée, sinon l'échange est refusé
+                string tagLine = null;
+                if (door.IsClosed)
+                {
+                    if (heldTag != null) tagLine = (roomTag != null) ? swapTagPrompt : placeTagPrompt;
+                    else if (roomTag != null) tagLine = takePrompt;
+                }
+
+                // Ligne "porte" (F)
+                string doorLine = door.open ? closeDoorPrompt : openDoorPrompt;
+                prompt = (tagLine != null) ? tagLine + "\n" + doorLine : doorLine;
+            }
+            else if (roomTag != null && heldTag == null)
+            {
+                prompt = takePrompt;
+            }
+            else if (heldTag != null && Vector3.Dot(hit.normal, Vector3.up) >= 0.7f)
+            {
+                prompt = putDownPrompt;
+            }
+        }
+
+        SetPrompt(prompt);
+    }
+
+    private void SetPrompt(string text)
+    {
+        if (promptText == null) return;
+
+        bool show = !string.IsNullOrEmpty(text);
+        if (show) promptText.text = text;
+        if (promptText.gameObject.activeSelf != show) promptText.gameObject.SetActive(show);
+    }
+
+    private void OpenNote(NoteSheet note)
+    {
+        if (NarrationManager.Instance == null) return;
+
+        NarrationManager.Instance.ShowNote(note);
+        isReading = true;
+    }
+
+    private void CloseNote()
+    {
+        if (NarrationManager.Instance != null) NarrationManager.Instance.HideNote();
+        isReading = false;
+    }
+
     private void FixedUpdate()
     {
+        if (isReading)
+        {
+            rb.linearVelocity = new Vector3(0f, rb.linearVelocity.y, 0f);
+            return;
+        }
+
         if (isPaused)
         {
             rb.linearVelocity = Vector3.zero;
