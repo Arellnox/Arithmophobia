@@ -306,15 +306,6 @@ public class FirstPersonController : MonoBehaviour
         }
     }
 
-    private IEnumerator GrowCoroutine(Transform seed)
-    {
-        for (float s = 0.1f; s < maxSeedSize; s += Time.deltaTime)
-        {
-            seed.localScale = new Vector3(s, s, s);
-            yield return null;
-        }
-    }
-
     public void PauseGame()
     {
         isPaused = true;
