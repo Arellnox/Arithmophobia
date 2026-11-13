@@ -31,6 +31,8 @@ public class FirstPersonController : MonoBehaviour
     [SerializeField] private float maxSeedSize = 10;
     [SerializeField] private float interactRange = 3f;
 
+    private bool isReading = false; // true pendant la lecture d'une fiche
+
     private bool invertYAxis = false;
 
     private Transform mainCam;
@@ -113,6 +115,17 @@ public class FirstPersonController : MonoBehaviour
 
     void Update()
     {
+        // Lecture d'une fiche : seuls E et Échap sont actifs, ils referment la fiche
+        if (isReading)
+        {
+            if (Keyboard.current != null &&
+                (Keyboard.current.eKey.wasPressedThisFrame || Keyboard.current.escapeKey.wasPressedThisFrame))
+            {
+                CloseNote();
+            }
+            return;
+        }
+
         if (Keyboard.current != null && Keyboard.current.escapeKey.wasPressedThisFrame)
         {
             if (isPaused) ResumeGame();
@@ -199,6 +212,14 @@ public class FirstPersonController : MonoBehaviour
     {
         if (!TryRaycast(out RaycastHit hit)) return;
 
+        // Fiche de note : on la lit
+        NoteSheet note = hit.collider.GetComponentInParent<NoteSheet>();
+        if (note != null)
+        {
+            OpenNote(note);
+            return;
+        }
+
         DoorScript.Door door = hit.collider.GetComponentInParent<DoorScript.Door>();
         RoomTag roomTag = hit.collider.GetComponent<RoomTag>();
 
@@ -226,8 +247,28 @@ public class FirstPersonController : MonoBehaviour
         }
     }
 
+    private void OpenNote(NoteSheet note)
+    {
+        if (NarrationManager.Instance == null) return;
+
+        NarrationManager.Instance.ShowNote(note);
+        isReading = true;
+    }
+
+    private void CloseNote()
+    {
+        if (NarrationManager.Instance != null) NarrationManager.Instance.HideNote();
+        isReading = false;
+    }
+
     private void FixedUpdate()
     {
+        if (isReading)
+        {
+            rb.linearVelocity = new Vector3(0f, rb.linearVelocity.y, 0f);
+            return;
+        }
+
         if (isPaused)
         {
             rb.linearVelocity = Vector3.zero;

@@ -21,6 +21,11 @@ namespace DoorScript
         [Tooltip("Point où l'étiquette s'affiche visuellement sur la porte")]
         [SerializeField] private Transform tagSlotPoint;
 
+        [Header("Narration")]
+        [Tooltip("Répliques dites (à tour de rôle) quand on essaie d'ouvrir la porte sans étiquette")]
+        [SerializeField] private NarrationLine[] missingTagLines;
+        private int missingTagIndex;
+
         [Header("Events")]
         [Tooltip("Appelé quand la porte s'ouvre sur l'étiquette de sortie (fin du jeu)")]
         public UnityEvent onExitOpened;
@@ -64,6 +69,7 @@ namespace DoorScript
             if (!open && (currentTag == null || currentTag.correspondingRoomPrefab == null))
             {
                 Debug.Log("Impossible d'ouvrir : aucune étiquette valide n'est fixée sur la porte.");
+                SayMissingTag();
                 return;
             }
 
@@ -75,6 +81,14 @@ namespace DoorScript
             {
                 TriggerRoomTransition();
             }
+        }
+
+        void SayMissingTag()
+        {
+            if (NarrationManager.Instance == null || missingTagLines == null || missingTagLines.Length == 0) return;
+
+            NarrationManager.Instance.Say(missingTagLines[missingTagIndex]);
+            missingTagIndex = (missingTagIndex + 1) % missingTagLines.Length;
         }
 
         void TriggerRoomTransition()
