@@ -33,6 +33,7 @@ public class FirstPersonController : MonoBehaviour
     [SerializeField] private float interactRange = 3f;
 
     private bool isReading = false; // true pendant la lecture d'une fiche
+    private bool isFrozen = false;  // true pendant la séquence de fin
 
     [Header("Interaction prompts")]
     [SerializeField] private TextMeshProUGUI promptText;
@@ -126,6 +127,13 @@ public class FirstPersonController : MonoBehaviour
 
     void Update()
     {
+        // Fin du jeu : plus aucun contrôle (pas même la pause)
+        if (isFrozen)
+        {
+            SetPrompt(null);
+            return;
+        }
+
         // Lecture d'une fiche : seuls E et Échap sont actifs, ils referment la fiche
         if (isReading)
         {
@@ -333,6 +341,12 @@ public class FirstPersonController : MonoBehaviour
 
     private void FixedUpdate()
     {
+        if (isFrozen)
+        {
+            rb.linearVelocity = Vector3.zero;
+            return;
+        }
+
         if (isReading)
         {
             rb.linearVelocity = new Vector3(0f, rb.linearVelocity.y, 0f);
@@ -383,6 +397,15 @@ public class FirstPersonController : MonoBehaviour
             seed.localScale = new Vector3(s, s, s);
             yield return null;
         }
+    }
+
+    // Appelé par EndSequence : le joueur ne peut plus rien faire
+    public void FreezeForEnding()
+    {
+        isFrozen = true;
+        isReading = false;
+        SetPrompt(null);
+        if (rb != null) rb.linearVelocity = Vector3.zero;
     }
 
     public void PauseGame()
