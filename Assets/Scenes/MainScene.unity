@@ -857,6 +857,81 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 475148, guid: b826295956c65444987d7baae67c5858, type: 3}
   m_PrefabInstance: {fileID: 323770479}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &328667500
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 328667501}
+  - component: {fileID: 328667503}
+  - component: {fileID: 328667502}
+  m_Layer: 5
+  m_Name: Image (1)
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &328667501
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 328667500}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 2.8587623, y: 0.6860005, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 408275091}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 18.6, y: 0}
+  m_SizeDelta: {x: 100, y: 100}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &328667502
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 328667500}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Material: {fileID: 0}
+  m_Color: {r: 0, g: 0, b: 0, a: 0.428}
+  m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_Sprite: {fileID: 0}
+  m_Type: 0
+  m_PreserveAspect: 0
+  m_FillCenter: 1
+  m_FillMethod: 4
+  m_FillAmount: 1
+  m_FillClockwise: 1
+  m_FillOrigin: 0
+  m_UseSpriteMesh: 0
+  m_PixelsPerUnitMultiplier: 1
+--- !u!222 &328667503
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 328667500}
+  m_CullTransparentMesh: 1
 --- !u!1 &339383622
 GameObject:
   m_ObjectHideFlags: 0
@@ -1350,12 +1425,13 @@ RectTransform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children: []
+  m_Children:
+  - {fileID: 328667501}
   m_Father: {fileID: 682472106}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 382, y: -233}
+  m_AnchoredPosition: {x: 382, y: -206.7}
   m_SizeDelta: {x: 200, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &408275092
@@ -1847,7 +1923,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0}
   m_AnchorMax: {x: 0.5, y: 0}
-  m_AnchoredPosition: {x: -21.399994, y: 30.5}
+  m_AnchoredPosition: {x: -21.399994, y: 37.1}
   m_SizeDelta: {x: 198, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &504032888
@@ -3131,15 +3207,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4706694623358208459, guid: 3889b3008743b404aba704ca0f2f2989, type: 3}
       propertyPath: missingTagLines.Array.data[0].text
-      value: "\xAB Il doit me manquer quelque chose. \xBB"
+      value: <i> Something must be missing. </i>
       objectReference: {fileID: 0}
     - target: {fileID: 4706694623358208459, guid: 3889b3008743b404aba704ca0f2f2989, type: 3}
       propertyPath: missingTagLines.Array.data[1].text
-      value: "\xAB Je ne peux pas l'ouvrir comme \xE7a. \xBB"
+      value: <i>I can't open it like that. </i>
       objectReference: {fileID: 0}
     - target: {fileID: 4706694623358208459, guid: 3889b3008743b404aba704ca0f2f2989, type: 3}
       propertyPath: missingTagLines.Array.data[2].text
-      value: "\xAB Il me faut quelque chose pour cette porte. \xBB"
+      value: <i>I need something for this door.</i>
       objectReference: {fileID: 0}
     - target: {fileID: 8960320171995827079, guid: 3889b3008743b404aba704ca0f2f2989, type: 3}
       propertyPath: m_LocalPosition.y
@@ -4213,6 +4289,144 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 493860, guid: a73967be39a7cc74ca310e8a9d9de82d, type: 3}
   m_PrefabInstance: {fileID: 1043535167}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &1157621221
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1157621222}
+  - component: {fileID: 1157621224}
+  - component: {fileID: 1157621223}
+  m_Layer: 5
+  m_Name: PromptText
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &1157621222
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1157621221}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 1601472486}
+  m_Father: {fileID: 2114729795}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 3.6, y: -140}
+  m_SizeDelta: {x: 200, y: 50}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &1157621223
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1157621221}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.TextMeshPro::TMPro.TextMeshProUGUI
+  m_Material: {fileID: 0}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_text: New Text
+  m_isRightToLeft: 0
+  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_fontSharedMaterials: []
+  m_fontMaterial: {fileID: 0}
+  m_fontMaterials: []
+  m_fontColor32:
+    serializedVersion: 2
+    rgba: 4294967295
+  m_fontColor: {r: 1, g: 1, b: 1, a: 1}
+  m_enableVertexGradient: 0
+  m_colorMode: 3
+  m_fontColorGradient:
+    topLeft: {r: 1, g: 1, b: 1, a: 1}
+    topRight: {r: 1, g: 1, b: 1, a: 1}
+    bottomLeft: {r: 1, g: 1, b: 1, a: 1}
+    bottomRight: {r: 1, g: 1, b: 1, a: 1}
+  m_fontColorGradientPreset: {fileID: 0}
+  m_spriteAsset: {fileID: 0}
+  m_tintAllSprites: 0
+  m_StyleSheet: {fileID: 0}
+  m_TextStyleHashCode: -1183493901
+  m_overrideHtmlColors: 0
+  m_faceColor:
+    serializedVersion: 2
+    rgba: 4294967295
+  m_fontSize: 18
+  m_fontSizeBase: 18
+  m_fontWeight: 400
+  m_enableAutoSizing: 0
+  m_fontSizeMin: 18
+  m_fontSizeMax: 72
+  m_fontStyle: 0
+  m_HorizontalAlignment: 2
+  m_VerticalAlignment: 512
+  m_textAlignment: 65535
+  m_characterSpacing: 0
+  m_characterHorizontalScale: 1
+  m_wordSpacing: 0
+  m_lineSpacing: 0
+  m_lineSpacingMax: 0
+  m_paragraphSpacing: 0
+  m_charWidthMaxAdj: 0
+  m_TextWrappingMode: 1
+  m_wordWrappingRatios: 0.4
+  m_overflowMode: 0
+  m_linkedTextComponent: {fileID: 0}
+  parentLinkedComponent: {fileID: 0}
+  m_enableKerning: 0
+  m_ActiveFontFeatures: 6e72656bu
+  m_enableExtraPadding: 0
+  checkPaddingRequired: 0
+  m_isRichText: 1
+  m_EmojiFallbackSupport: 1
+  m_parseCtrlCharacters: 1
+  m_isOrthographic: 1
+  m_isCullingEnabled: 0
+  m_horizontalMapping: 0
+  m_verticalMapping: 0
+  m_uvLineOffset: 0
+  m_geometrySortingOrder: 0
+  m_IsTextObjectScaleStatic: 0
+  m_VertexBufferAutoSizeReduction: 0
+  m_useMaxVisibleDescender: 1
+  m_pageToDisplay: 1
+  m_margin: {x: 0, y: 0, z: 0, w: 0}
+  m_isUsingLegacyAnimationComponent: 0
+  m_isVolumetricText: 0
+  m_hasFontAssetChanged: 0
+  m_baseMaterial: {fileID: 0}
+  m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
+--- !u!222 &1157621224
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1157621221}
+  m_CullTransparentMesh: 1
 --- !u!1001 &1165070803
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -5248,7 +5462,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1579232421
 RectTransform:
   m_ObjectHideFlags: 0
@@ -5260,8 +5474,7 @@ RectTransform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children:
-  - {fileID: 1601472486}
+  m_Children: []
   m_Father: {fileID: 449757193}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
@@ -5402,14 +5615,14 @@ RectTransform:
   m_GameObject: {fileID: 1601472485}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1.3500221, y: 0.6860005, z: 1}
+  m_LocalScale: {x: 2.0410984, y: 0.6860005, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 1579232421}
+  m_Father: {fileID: 1157621222}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 6}
+  m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1601472487
@@ -7202,6 +7415,7 @@ RectTransform:
   m_Children:
   - {fileID: 504032887}
   - {fileID: 682472106}
+  - {fileID: 1157621222}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
@@ -7230,12 +7444,44 @@ PrefabInstance:
       value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 6202799059201081417, guid: 67d7035d01d86df438117c9ff028298a, type: 3}
+      propertyPath: promptText
+      value: 
+      objectReference: {fileID: 1157621223}
+    - target: {fileID: 6202799059201081417, guid: 67d7035d01d86df438117c9ff028298a, type: 3}
+      propertyPath: readPrompt
+      value: '"E" to read'
+      objectReference: {fileID: 0}
+    - target: {fileID: 6202799059201081417, guid: 67d7035d01d86df438117c9ff028298a, type: 3}
+      propertyPath: takePrompt
+      value: '"E" to take'
+      objectReference: {fileID: 0}
+    - target: {fileID: 6202799059201081417, guid: 67d7035d01d86df438117c9ff028298a, type: 3}
       propertyPath: optionPanel
       value: 
       objectReference: {fileID: 650860847}
     - target: {fileID: 6202799059201081417, guid: 67d7035d01d86df438117c9ff028298a, type: 3}
       propertyPath: sensitivity
       value: 25
+      objectReference: {fileID: 0}
+    - target: {fileID: 6202799059201081417, guid: 67d7035d01d86df438117c9ff028298a, type: 3}
+      propertyPath: putDownPrompt
+      value: '"E" to put down'
+      objectReference: {fileID: 0}
+    - target: {fileID: 6202799059201081417, guid: 67d7035d01d86df438117c9ff028298a, type: 3}
+      propertyPath: swapTagPrompt
+      value: '"E" to swap the tag'
+      objectReference: {fileID: 0}
+    - target: {fileID: 6202799059201081417, guid: 67d7035d01d86df438117c9ff028298a, type: 3}
+      propertyPath: openDoorPrompt
+      value: '"F" to open'
+      objectReference: {fileID: 0}
+    - target: {fileID: 6202799059201081417, guid: 67d7035d01d86df438117c9ff028298a, type: 3}
+      propertyPath: placeTagPrompt
+      value: '"E" to place the tag'
+      objectReference: {fileID: 0}
+    - target: {fileID: 6202799059201081417, guid: 67d7035d01d86df438117c9ff028298a, type: 3}
+      propertyPath: closeDoorPrompt
+      value: '"F" to close'
       objectReference: {fileID: 0}
     - target: {fileID: 7476989065042815785, guid: 67d7035d01d86df438117c9ff028298a, type: 3}
       propertyPath: m_LocalPosition.x
