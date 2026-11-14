@@ -58,7 +58,7 @@ public class EndSequence : MonoBehaviour
     private IEnumerator Sequence()
     {
         // 1. Le joueur ne peut plus rien faire
-        FirstPersonController player = FindFirstObjectByType<FirstPersonController>();
+        FirstPersonController player = FindAnyObjectByType<FirstPersonController>();
         if (player != null) player.FreezeForEnding();
 
         // 2. Cut : l'image passe au noir et le son s'éteint en même temps

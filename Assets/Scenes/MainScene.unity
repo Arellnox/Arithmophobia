@@ -4868,6 +4868,10 @@ PrefabInstance:
       propertyPath: m_LocalPosition.z
       value: 0.01557509
       objectReference: {fileID: 0}
+    - target: {fileID: 1382221926588035844, guid: 6ed4db007ffba824bbbfcae4f7595a21, type: 3}
+      propertyPath: blackScreenCanvasGroup
+      value: 
+      objectReference: {fileID: 1793097260}
     - target: {fileID: 1607531315891560309, guid: 6ed4db007ffba824bbbfcae4f7595a21, type: 3}
       propertyPath: correspondingRoomPrefab
       value: 
